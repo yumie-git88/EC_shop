@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(body)">
+<head>
+<meta charset="UTF-8">
+<title th:text="${pageTitle}">商品詳細画面レイアウト</title>
+</head>
+<body>
+	<article id="container" class="flex-container">
+		<main id="main" class="main-content" th:replace="~{::${body}}"></main>
+		<aside class="sidebar" th:replace="~{product/purchaseSidebar :: sidebarContent}"></aside>
+	</article>
+</body>
+</html>

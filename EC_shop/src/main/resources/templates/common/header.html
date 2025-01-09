@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>ヘッダー</title>
+</head>
+<body>
+<div id="header" class="container-fluid" th:fragment="header">
+	<div class="bg-dark row d-flex justify-content-center align-items-center p-3">
+		<div class="col-md-2 d-flex align-items-center">
+			<p class="text-align text-light mb-0">Cytech EC.</p>
+		</div>
+		<div class="col-md-6 d-flex align-items-center">
+			<form th:action="@{/findProductList}" method="post" th:object="${ProductList}">
+				<div class="row">
+					<input type="text" class="form-control col-md-5" name="productName" placeholder="商品名">
+					<select name="categoryList" class="form-control col-md-5" th:inline="text">
+						<option value="">指定なし</option>
+						<p th:each="category : ${categories}">
+							<option th:value="${category.categoryId}"th:text="${category.categoryName}"></option>
+						</p>
+					</select>
+					<input type="submit" value="検索" class="btn btn-outline-light col-md-2">
+				</div>
+			</form>
+		</div>
+		<div class="col-md-4 d-flex align-items-center">
+			<a th:href="@{/myPage}" class="btn btn-primary mx-3">マイページ</a>
+			<div class="d-flex flex-column align-items-start mx-1">
+				<div>
+					<label for="userName" class="text-light small">ユーザー名：</label>
+					<span th:text="${userName}" class="text-light small">ユーザー名</span>
+				</div>
+				<div>
+					<a th:href="@{/logout}" class="text-light small">ログアウト</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

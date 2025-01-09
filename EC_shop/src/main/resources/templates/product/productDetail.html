@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>商品詳細画面</title>
+</head>
+<body>
+	<div th:insert="~{common/sourceList :: sourceList}"></div>
+	<div th:replace="~{common/header :: header}"></div>
+	<main id="main" class="container">
+		<div th:replace="~{product/productDetails :: mainContent}"></div>
+	</main>
+	<div th:replace="~{common/footer :: footer}"></div>
+</body>
+</html>
+<!--			<div th:replace="~{product/purchaseSidebar :: sidebarContent}"></div>-->

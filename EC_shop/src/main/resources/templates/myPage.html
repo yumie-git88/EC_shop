@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>マイページ</title>
+</head>
+<body>
+	<div th:insert="~{common/sourceList :: sourceList}"></div>
+	<div th:replace="~{common/header :: header}"></div>
+	<div class="container my-5">
+		<div class="my-2 pb-5">
+			<h3>マイページ画面</h3>
+		</div>
+		<div>
+			<p>名前: <span th:text="${userName}"></span></p>
+			<p>ひらがな:<span th:text="${userHiragana}"></span></p>
+			<p>電話番号: <span th:text="${userPhoneNumber}"></span></p> </div>
+		</div>
+	</div>
+	<div th:replace="~{common/footer :: footer}"></div>
+</body>
+</html>
