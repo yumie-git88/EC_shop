@@ -2,12 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(body)">
 <head>
 <meta charset="UTF-8">
-<title th:text="${pageTitle}">商品詳細画面レイアウト</title>
+<title>商品詳細画面</title>
 </head>
 <body>
-	<article id="container" class="flex-container">
-		<main id="main" class="main-content" th:replace="~{::${body}}"></main>
-		<aside class="sidebar" th:replace="~{product/purchaseSidebar :: sidebarContent}"></aside>
-	</article>
+	<!--商品詳細画面レイアウト-->
+	<div th:insert="~{common/sourceList :: sourceList}"></div>
+	<div th:replace="~{common/header :: header}"></div>
+	<div class="container my-4">
+		<div class="my-2 pb-5">
+			<h3>商品詳細画面</h3>
+		</div>
+		<div class="row">
+			<div class="col-md-8" id="main" th:replace="${body}"></div>
+			<div class="col-md-4" th:replace="~{product/purchaseSidebar :: sidebarContent}"></div>
+		</div>
+	</div>
+	<div th:replace="~{common/footer :: footer}"></div>
 </body>
 </html>

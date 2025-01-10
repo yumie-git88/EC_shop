@@ -1,35 +1,15 @@
 @charset "UTF-8";
 
-header, footer {
+footer {
 	bottom: 0;
 	width: 100%;
 	height: 10%;
-	padding: 20px 0;  /* 上下のパディング */
+	padding: 20px 0;
 }
 
-/*.container {*/
-/*	background-color: burlywood;*/
-/*}*/
-
-/*.row {*/
-/*	background-color: cornflowerblue;*/
-/*}*/
-
-.flex-container {
-	display: flex;
-	background-color: rebeccapurple;
-}
-
-.main-content {
-/*	float: left;*/
-	flex: 1;
-	background-color: #ffd700;
-}
-.sidebar {
-/*	float: left;*/
-	width: 300px;
+#sidebar {
+	width: 25%;
 	margin-left: auto;
-	background-color: aqua;
 }
 
 .star {

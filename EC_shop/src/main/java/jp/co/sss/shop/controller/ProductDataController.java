@@ -1,5 +1,8 @@
 package jp.co.sss.shop.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -47,10 +50,31 @@ public class ProductDataController extends CommonController {
 			model.addAttribute("product", product.get());
 			var reviews = reviewRepository.findByProductId(id);
 			model.addAttribute("reviews", reviews);
+			
+			LocalDateTime dateTime = LocalDateTime.now(); // 日付フォーマット処理の追加
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年M月d日 HH:mm");
+			String formattedDate = dateTime.format(formatter);
+			model.addAttribute("formattedDate", formattedDate);
 			return "product/productDetail";
 		} else {
-//			return "error/404"; // 商品が見つからない場合のエラーページ
-			return "redirect:/"; // 商品が見つからない場合のエラーページ
+			return "redirect:/";
+		}
+	}
+	
+	/**
+	 * 商品単体購入ボタン
+	 * 
+	 * @param id 商品ID
+	 * @param model モデル
+	 * @return 購入品詳細画面遷移
+	 */
+	@GetMapping("/productDetail/{id}")
+	public String productDetail(@PathVariable("id") Integer id, Model model) {
+		var product = repository.findById(id); if (product.isPresent()) {
+			model.addAttribute("product", product.get());
+			return "purchaseDetail";
+		} else {
+			return "redirect:/";
 		}
 	}
 }
