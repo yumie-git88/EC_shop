@@ -1,17 +1,132 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>購入品詳細画面</title>
+	<meta charset="UTF-8">
+	<title>購入品詳細画面</title>
 </head>
+
 <body>
+	<div th:insert="~{common/sourceList :: sourceList}"></div>
+	<div th:replace="~{common/header :: header}"></div>
 	<div class="container my-4">
 		<div class="my-2 pb-5">
 			<h3>購入品詳細画面</h3>
 		</div>
-		<div>
-			
-		</div>
+		<form id="purchaseForm" method="post" th:action="@{/purchaseConfirmation}" th:object="${purchaseDetailForm}">
+			<div class="mb-5">
+				<div class="mb-3">＜受け取り場所＞</div>
+				<div class="row mb-3">
+					<div class="col-md-1">
+						<input type="radio" name="location" value="1" onclick="updateSelection(this, 'location')"
+							checked>
+					</div>
+					<div class="col-md-11 p-3 border" id="location1">
+						<label for="userName" class="w-100">名前：</label><span th:text="${userName}"></span><br>
+						<label for="userAddress" class="mt-2">住所：</label>
+						<input type="text" class="form-control" id="userAddress1" name="userAddress1"
+							th:value="${userAddress}" placeholder="住所">
+						<label for="apartment" class="mt-2">アパート名等：</label>
+						<input type="text" class="form-control" id="apartment1" name="apartment1"
+							th:value="${apartment}" placeholder="アパート名等">
+					</div>
+				</div>
+				<div class="row mb-3">
+					<div class="col-md-1">
+						<input type="radio" name="location" value="2" onclick="updateSelection(this, 'location')">
+					</div>
+					<div class="col-md-11 p-3 border grayed-out" id="location2">
+						<label for="userName" class="w-100">名前：</label><span th:text="${userName}"></span><br>
+						<label for="userAddress" class="mt-2">住所：</label>
+						<input type="text" class="form-control" id="userAddress2" name="userAddress2"
+							th:value="${userAddress}" placeholder="住所">
+						<label for="apartment" class="mt-2">アパート名等：</label>
+						<input type="text" class="form-control" id="apartment2" name="apartment2"
+							th:value="${apartment}" placeholder="アパート名等">
+					</div>
+				</div>
+			</div>
+			<div class="mb-5">
+				<div class="mb-3">＜お支払い情報＞</div>
+				<div class="row mb-3">
+					<div class="col-md-1"><input type="radio" name="payInformation" value="1"
+							onclick="updateSelection(this, 'payInformation')" checked></div>
+					<div class="col-md-11 p-3 border" id="payInformation1">
+						<input type="text" class="form-control w-100 mb-3" th:value="${cardNumber}" name="cardNumber1"
+							placeholder="カード番号" maxlength="15" pattern="\d*">
+						<input type="text" class="form-control w-100" th:value="${expirationDate}"
+							name="expirationDate1" id="expirationDate1" placeholder="有効期限 MM/YY" maxlength="5">
+					</div>
+				</div>
+				<div class="row mb-3">
+					<div class="col-md-1"><input type="radio" name="payInformation" value="2"
+							onclick="updateSelection(this, 'payInformation')"></div>
+					<div class="col-md-11 p-3 border grayed-out" id="payInformation2">
+						<input type="text" class="form-control w-100 mb-3" th:value="${cardNumber}" name="cardNumber2"
+							placeholder="カード番号" maxlength="15" pattern="\d*">
+						<input type="text" class="form-control w-100" th:value="${expirationDate}"
+							name="expirationDate2" id="expirationDate2" placeholder="有効期限 MM/YY" maxlength="5">
+					</div>
+				</div>
+			</div>
+			<input type="button" class="btn btn-secondary mx-2 px-4" value="戻る" onclick="history.back()">
+			<input type="hidden" th:if="${product != null}" name="productId" th:value="${product.productId}">
+			<input type="hidden" id="selectedLocation" name="selectedLocation" th:value="${selectedLocation}">
+			<input type="hidden" id="selectedPayInformation" name="selectedPayInformation"
+				th:value="${selectedPayInformation}">
+			<input type="submit" class="btn btn-primary mx-2 px-4" th:value="確認">
+		</form>
 	</div>
+	<div th:replace="~{common/footer :: footer}"></div>
+	<script>
+		let selectedLocation = 1;
+		let selectedPayInformation = 1;
+
+		function updateSelection(element, group) {
+			if (group === 'location') {
+				selectedLocation = element.value;
+				document.querySelectorAll('.container .border[id^="location"]').forEach(el => {
+					el.classList.add('grayed-out');
+					el.querySelectorAll('input').forEach(input => input.disabled = true);
+				});
+				const selectedLocationElement = document.getElementById('location' + selectedLocation);
+				selectedLocationElement.classList.remove('grayed-out');
+				selectedLocationElement.querySelectorAll('input').forEach(input => input.disabled = false);
+			} else if (group === 'payInformation') {
+				selectedPayInformation = element.value;
+				document.querySelectorAll('.container .border[id^="payInformation"]').forEach(el => {
+					el.classList.add('grayed-out');
+					el.querySelectorAll('input').forEach(input => input.disabled = true);
+				});
+				const selectedPayInformationElement = document.getElementById('payInformation' + selectedPayInformation);
+				selectedPayInformationElement.classList.remove('grayed-out');
+				selectedPayInformationElement.querySelectorAll('input').forEach(input => input.disabled = false);
+			}
+
+			document.getElementById('selectedLocation').value = selectedLocation;
+			document.getElementById('selectedPayInformation').value = selectedPayInformation;
+		}
+
+		document.addEventListener('DOMContentLoaded', (event) => {
+			updateSelection(document.querySelector('input[name="location"]:checked') || {value: 1}, 'location');
+			updateSelection(document.querySelector('input[name="payInformation"]:checked') || {value: 1}, 'payInformation');
+		});
+
+		document.getElementById('expirationDate1').addEventListener('input', function (e) {
+			var value = e.target.value.replace(/\D/g, '');
+			if (value.length > 2) {
+				value = value.slice(0, 2) + '/' + value.slice(2, 4);
+			}
+			e.target.value = value;
+		});
+		document.getElementById('expirationDate2').addEventListener('input', function (e) {
+			var value = e.target.value.replace(/\D/g, '');
+			if (value.length > 2) {
+				value = value.slice(0, 2) + '/' + value.slice(2, 4);
+			}
+			e.target.value = value;
+		});
+	</script>
 </body>
+
 </html>

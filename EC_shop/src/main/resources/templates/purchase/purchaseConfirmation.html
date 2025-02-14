@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>購入確認画面</title>
+</head>
+<body>
+	<div th:insert="~{common/sourceList :: sourceList}"></div>
+	<div th:replace="~{common/header :: header}"></div>
+	<div class="container my-4">
+		<div class="my-2 pb-5">
+			<h3>購入確認画面</h3>
+		</div>
+		<div class="mb-5">
+			<form th:action="@{/orderComplete}" th:object="${purchaseDetailForm}" method="post">
+				<div class="my-3">
+					<label for="userName" class="w-100">名前：<span th:text="${userName}"></span><br>
+					<label for="userAddress" class="mt-2">住所：</label><span th:text="${purchaseDetailForm.selectedUserAddress}"></span><br>
+					<label for="apartment" class="mt-2">アパート名：</label><span th:text="${purchaseDetailForm.selectedApartment}"></span>
+					<ul>
+						<li th:each="cartItem : ${cartList}">
+							<label for="productName" class="mt-2">商品名：</label><span th:text="${cartItem.product.productName}"></span><br>
+							<label for="quantity" class="mt-2">数量：</label><span th:text="${cartItem.quantity}"></span><br>
+							<label for="taxPrice" class="mt-2">金額：</label><span th:text="'¥' + ${cartItem.product.taxPrice}"></span>
+							<input type="hidden" name="productId" th:value="${cartItem.product.productId}">
+						</li>
+					</ul>
+					<label for="totalPriceIncludingTax">合計金額：</label><span th:text="'¥' + ${totalPriceIncludingTax}"></span>
+				</div>
+				<input type="hidden" name="cardNumber" th:value="${purchaseDetailForm.selectedCardNumber}">
+				<input type="button" class="btn btn-danger mx-2 px-4" value="編集" onclick="history.back()">
+				<input type="submit" class="btn btn-primary mx-2 px-4" value="購入">
+			</form>
+		</div>
+	</div>
+	<div th:replace="~{common/footer :: footer}"></div>
+</body>
+</html>

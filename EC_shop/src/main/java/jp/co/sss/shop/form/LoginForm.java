@@ -1,7 +1,6 @@
 package jp.co.sss.shop.form;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -18,7 +17,6 @@ public class LoginForm {
 	@Length(min = 1,max = 200)
 	private String email;
 	
-	@Pattern(regexp = "^[a-xA-Z0-9]+$")
 	@NotBlank
 	@Length(min = 8,max = 16)
 	private String password;

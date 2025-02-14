@@ -1,9 +1,9 @@
 package jp.co.sss.shop.service;
 
-
 import java.util.Optional;
 
 import org.dozer.Mapper; //選び直し
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +18,17 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserRegisterService {
-	
+
 	/**	ユーザー情報テーブルDAO */
+	@Autowired
 	private final UserInfoRepository repository;
-	
+
 	/** Dozer Mapper */
 	private final Mapper mapper;
-	
+
 	/** passwordEncoder */
 	private final PasswordEncoder passwordEncoder;
-	
+
 	/**
 	 * ユーザー情報テーブル 新規登録
 	 * 
@@ -40,10 +41,14 @@ public class UserRegisterService {
 			return Optional.empty();
 		}
 		var userInfo = mapper.map(form, UserInfo.class);
-		
+
 		var encodedPassword = passwordEncoder.encode(form.getPassword());
 		userInfo.setPassword(encodedPassword);
-		
+
 		return Optional.of(repository.save(userInfo));
+	}
+
+	public Optional<UserInfo> findUserByEmail(String email) {
+		return repository.findByEmail(email);
 	}
 }

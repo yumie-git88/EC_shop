@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>カート追加画面</title>
+</head>
+<body>
+	<div th:insert="~{common/sourceList :: sourceList}"></div>
+	<div th:replace="~{common/header :: header}"></div>
+	<div class="container my-4">
+		<div class="my-2 pb-5">
+			<h3>カート追加画面</h3>
+		</div>
+		<div id="cartMessage" th:text="${cartMessage}" th:if="${cartMessage != null}" style="display: block;"
+			class=" alert alert-success"></div>
+		<div th:if="${product != null}">
+			<div class="row mb-5">
+				<div class="col-md-8 my-3">
+						<img th:src="@{${product.productImgPath}}" src="https://placehold.jp/450x300.png"
+							class="img-fluid" th:alt="${product.productName}">
+				</div>
+				<div class="col-md-4">
+					<div class="m-2 d-flex align-items-center">
+						<label for="productName" class="col-form-label mb-0">商品名：</label>
+						<p th:text="${product.productName}" class="ml-2 mb-0"></p>
+					</div>
+					<div class="m-2 d-flex align-items-center">
+						<label for="quantity" class="mt-2">個数：</label>
+						<p th:text="${cartItem.quantity}" class="ml-2 mb-0"></p>
+					</div>
+					<div class="m-2 d-flex align-items-center">
+						<label for="totalAmopunt" class="col-form-label">カート内の合計：</label>
+						<p th:text="'¥' + ${totalAmount}" class="ml-2 mb-0"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mb-5" th:if="${product == null}">
+			<p>カートに商品がありません</p>
+		</div>
+		<div class="row">
+			<!--購入品詳細画面へ-->
+			<div class="col-md-4">
+				<form th:action="@{/CartPurchaseDetail}" method="post">
+					<input type="hidden" name="productId" th:value="${product.productId}">
+					<button type="submit" class="btn btn-primary">レジに進む</button>
+				</form>
+			</div>
+			<!--カート詳細画面へ-->
+			<div class="col-md-4">
+				<form th:action="@{/cartList}" method="post">
+					<input type="hidden" name="userId" th:value="${userId}">
+					<input type="hidden" name="productId" th:value="${product.productId}">
+					<input type="hidden" name="quantity" th:value="${cartItem.quantity}">
+					<a th:href="@{/cartList}" class="btn btn-primary">カートに移動</a>
+				</form>
+			</div>
+			<div class="col-md-4">
+				<a th:href="@{/}" class="btn btn-primary">TOP画面に戻る</a>
+			</div>
+		</div>
+	</div>
+	<div th:replace="~{common/footer :: footer}"></div>
+</body>
+</html>

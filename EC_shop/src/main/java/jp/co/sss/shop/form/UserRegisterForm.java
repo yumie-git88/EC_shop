@@ -1,7 +1,6 @@
 package jp.co.sss.shop.form;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
@@ -35,13 +34,11 @@ public class UserRegisterForm {
 	private String user_address;
 	
 	/** パスワード */
-	@Pattern(regexp = "^[a-xA-Z0-9]+$")
 	@NotBlank
 	@Length(min = 8,max = 16)
 	private String password;
 	
 	/** パスワード */
-	@Pattern(regexp = "^[a-xA-Z0-9]+$")
 	@NotBlank
 	@Length(min = 8,max = 16)
 	private String confirmPassword;

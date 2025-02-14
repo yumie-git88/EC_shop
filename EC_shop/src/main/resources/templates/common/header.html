@@ -16,9 +16,9 @@
 					<input type="text" class="form-control col-md-5" name="productName" placeholder="商品名">
 					<select name="categoryList" class="form-control col-md-5" th:inline="text">
 						<option value="">指定なし</option>
-						<p th:each="category : ${categories}">
+						<span th:each="category : ${categories}">
 							<option th:value="${category.categoryId}"th:text="${category.categoryName}"></option>
-						</p>
+						</span>
 					</select>
 					<input type="submit" value="検索" class="btn btn-outline-light col-md-2">
 				</div>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>カート詳細画面</title>
+	<script>
+		function updateHiddenQuantity(productId) {
+			const quantityElement = document.getElementById("quantity_" + productId);
+			const hiddenQuantityElement = document.getElementById("hiddenQuantity_" + productId);
+
+			if (quantityElement && hiddenQuantityElement) {
+				const quantity = quantityElement.value;
+				hiddenQuantityElement.value = quantity;
+			} else {
+				console.error("Element not found for productId: " + productId);
+			}
+		}
+
+		function recalculateForm(productId) {
+			updateHiddenQuantity(productId);
+			const formElement = document.getElementById("recalculateForm_" + productId);
+
+			if (formElement) {
+				formElement.submit();
+			} else {
+				console.error("Form not found for productId: " + productId);
+			}
+		}
+		function submitCartPurchaseForm() {
+			document.getElementById('cartPurchaseForm').submit();
+		}
+	</script>
+</head>
+
+<body>
+	<div th:insert="~{common/sourceList :: sourceList}"></div>
+	<div th:replace="~{common/header :: header}"></div>
+	<div class="container my-4">
+		<div class="my-2 pb-5">
+			<h3>カート詳細画面</h3>
+		</div>
+		<div id="cartMessage" th:text="${cartMessage}" th:if="${cartMessage != null}" style="display: block;"
+			class=" alert alert-success"></div>
+		<div th:if="${cartList != null}">
+			<div class="row">
+				<div class="col-md-9">
+					<div class="row" th:each="item : ${cartList}">
+						<div class="col-md-7">
+							<div class="my-3">
+								<img th:src="@{${item.product.productImgPath}}" src="https://placehold.jp/450x300.png"
+									class="img-fluid" th:alt="${item.product.productName}">
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="m-2 d-flex align-items-center text-nowrap">
+								<label for="productName" class="col-form-label mb-0">商品名：</label>
+								<p th:text="${item.product.productName}" class="ml-2 mb-0"></p>
+							</div>
+							<div class="m-2 d-flex align-items-center text-nowrap">
+								<form id="recalculateForm_${item.product.productId}" th:action="@{/updateCart}"
+									method="get">
+									<input type="hidden" name="productId" th:value="${item.product.productId}">
+									<label for="quantity" class="col-form-label">数量：</label>
+									<select id="quantity_${item.product.productId}" name="quantity" class="ml-2">
+										<option th:each="i : ${#numbers.sequence(1, item.product.stock)}"
+											th:value="${i}" th:text="${i}" th:selected="${i == item.quantity}"></option>
+									</select>
+									<input type="hidden" id="hiddenQuantity_${item.product.productId}"
+										name="hiddenQuantity" th:value="${item.quantity}">
+									<!--<button type="button" class="btn btn-primary mx-2"
+										 th:attr="onclick='recalculateForm(' + ${item.product.productId} + ')'">再計算</button>-->
+								</form>
+								<div class="mx-2">
+									<form th:action="@{/deleteItem}" method="post" class="d-inline">
+										<input type="hidden" name="productId" th:value="${item.product.productId}">
+										<button type="submit" class="btn btn-danger mx-2">削除</button>
+									</form>
+								</div>
+							</div>
+							<div class="m-2 d-flex align-items-center text-nowrap">
+								<label for="price" class="col-form-label">価格：</label>
+								<p th:text="'¥' + (${item.product.price} * ${item.quantity})" class="ml-2 mb-0"></p>
+							</div>
+							<div class="m-2 d-flex align-items-center text-nowrap">
+								<label for="taxPrice" class="col-form-label">消費税込み価格：</label>
+								<p th:text="'¥' + (${item.product.taxPrice} * ${item.quantity})" class="ml-2 mb-0"></p>
+							</div>
+						</div>
+						<div class="col-md-2"></div>
+					</div>
+				</div>
+				<div class="col-md-3 my-2 pb-3 border">
+					<div class="m-2 d-flex align-items-center">
+						<label for="totalQuantity" class="mt-2">個数：</label>
+						<p th:text="${totalQuantity}" class="ml-2 mb-0"></p>
+					</div>
+					<div class="m-2 d-flex align-items-center">
+						<label for="totalPriceExcludingTax" class="col-form-label">金額：</label>
+						<p th:text="'¥' + ${totalPriceExcludingTax}" class="ml-2 mb-0"></p>
+					</div>
+					<div class="m-2 d-flex align-items-center">
+						<label for="totalPriceIncludingTax" class="col-form-label">消費税込み金額：</label>
+						<p th:text="'¥' + ${totalPriceIncludingTax}" class="ml-2 mb-0"></p>
+					</div>
+					<form th:action="@{/cartPurchaseDetail}" method="post" id="cartPurchaseForm">
+						<!--<input type="hidden" name="productId" th:value="${product?.productId}">-->
+						<button type="button" class="btn btn-primary" onclick="submitCartPurchaseForm()">レジに進む</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div th:replace="~{common/footer :: footer}"></div>
+
+</body>
+
+</html>

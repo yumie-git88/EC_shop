@@ -6,20 +6,24 @@
 </head>
 <body>
 	<aside class="p-4 border" id="sidebar" th:fragment="sidebarContent">
-		<div class="mb-4">
-			<a th:href="@{/purchase}" class="btn btn-primary mx-2 px-4">カートに入れる</a>
-		</div>
-		<div class="m-2">
-			<label for="quantity" class="col-form-label">数量：</label>
-			<select id="quantity" name="quantity" class="ml-2">
-				<option th:each="i : ${#numbers.sequence(1, 100)}" th:value="${i}" th:text="${i}"></option>
-			</select>
-		</div>
-		<div class="m-2">
-			<p>価格： ¥<span th:text="${product.price}"></span></p>
-			<p>税込価格： ¥<span th:text="${product.taxPrice}"></span></p>
-			<p>在庫表示： <span th:text="${product.stock}"></span></p>
-		</div>
+		<form method="post" th:action="@{/cartAdd}" th:object="${purchaseDetailForm}">
+			<div class="mb-4">
+				<input type="submit" class="btn btn-primary mx-2 px-4" value="カートに入れる">
+			</div>
+			<div class="m-2">
+				<label for="quantity" class="col-form-label">数量：</label>
+				<select id="quantity" name="quantity" class="ml-2">
+					<option th:each="i : ${#numbers.sequence(1, product.stock)}" th:value="${i}" th:text="${i}"></option>
+				</select>
+			</div>
+			<div class="m-2">
+				<p>価格： ¥<span th:text="${product.price}"></span></p>
+				<p>税込価格： ¥<span th:text="${product.taxPrice}"></span></p>
+				<p>在庫表示： <span th:text="${product.stock}"></span></p>
+			</div>
+			<input type="hidden" name="productId" th:value="${product.productId}">
+			<input type="hidden" name="userId" th:value="${userId}">
+		</form>
 	</aside>
 </body>
 </html>

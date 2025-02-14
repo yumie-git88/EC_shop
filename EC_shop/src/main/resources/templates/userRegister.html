@@ -20,17 +20,17 @@
 					</div>
 					<div class="form-group">
 						<label for="email" class="col-form-label">メールアドレス</label>
-						<input class="form-control" type="text" th:field="*{email}">
+						<input class="form-control" type="text" th:field="*{email}" pattern="\d*">
 						<span th:errors="*{email}" class="text-danger"></span>
 					</div>
 					<div class="form-group">
 						<label for="password" class="col-form-label">パスワード</label>
-						<input class="form-control" type="text" th:field="*{password}">
+						<input class="form-control" type="text" th:field="*{password}" pattern="\d*">
 						<span th:errors="*{password}" class="text-danger"></span>
 					</div>
 					<div class="form-group">
 						<label for="confirmPassword" class="col-form-label">パスワード(確認用)</label>
-						<input class="form-control" type="text" th:field="*{confirmPassword}">
+						<input class="form-control" type="text" th:field="*{confirmPassword}" pattern="\d*">
 						<span th:errors="*{confirmPassword}" class="text-danger"></span>
 					</div>
 					<div class="d-flex justify-content-center my-4">

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>口コミ投稿画面</title>
+</head>
+<body>
+	<div th:insert="~{common/sourceList :: sourceList}"></div>
+	<div th:replace="~{common/header :: header}"></div>
+	<div class="container my-4">
+		<div class="my-2 pb-5">
+			<h3>口コミ投稿画面</h3>
+		</div>
+		<div class="d-flex justify-content-center mb-5">
+			<form th:action="@{/reviewRegisterPost}" method="post" th:object="${ReviewRegisterForm}">
+				<div class="form-group">
+					<label for="dummyUserName" class="w-100">ユーザー名（任意）：</label>
+					<input type="text" class="form-control" id="dummyUserName" name="dummyUserName" th:value="${dummyUserName}" placeholder="ユーザー名" required>
+				</div>
+				<div class="form-group">
+					<label for="rating" class="w-100">評価（1〜5）：</label>
+					<select class="form-control" id="rating" name="rating" th:value="${rating}">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="email" class="w-100">メールアドレス：</label>
+					<input type="email" class="form-control" id="email" name="email" placeholder="メールアドレス" required>
+					</div>
+				<div class="form-group">
+					<label for="comment" class="w-100">コメント：</label>
+					<textarea class="form-control" id="comment" name="comment" maxlength="300" required></textarea>
+				</div>
+				<div class="form-group">
+					<label for="reviewImgPath">画像：</label><br>
+					<input type="file" id="reviewImgPath" name="reviewImgPath" th:value="${reviewImgPath}">
+				</div>
+				<div class="d-flex justify-content-center my-4">
+					<input type="submit" class="btn btn-success mx-2 px-4" value="投稿">
+					<a th:href="@{/productList}" class="btn btn-secondary mx-2 px-4">戻る</a>
+				</div>
+				<input type="hidden" name="productId" th:value="${product.productId}">
+			</form>
+			<p th:if="${message}" th:text="${message}"></p>
+		</div>
+	</div>
+	<div th:replace="~{common/footer :: footer}"></div>
+</body>
+</html>

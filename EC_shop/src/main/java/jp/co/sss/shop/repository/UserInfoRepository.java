@@ -13,4 +13,6 @@ import jp.co.sss.shop.entity.UserInfo;
 @Repository
 public interface UserInfoRepository extends JpaRepository<UserInfo, String>{
 	Optional<UserInfo> findByEmail(String email);
+
+	Optional<UserInfo> findUserByEmail(String email);
 }

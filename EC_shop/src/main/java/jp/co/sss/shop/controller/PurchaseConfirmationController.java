@@ -9,77 +9,46 @@ import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import jp.co.sss.shop.entity.Cart;
+import jp.co.sss.shop.entity.Order;
+import jp.co.sss.shop.entity.OrderItem;
 import jp.co.sss.shop.entity.Product;
 import jp.co.sss.shop.form.PurchaseDetailForm;
+import jp.co.sss.shop.service.OrderService;
 import jp.co.sss.shop.service.ProductService;
 import lombok.RequiredArgsConstructor;
 
 /**
- *  購入品詳細画面 住所入力 Controller
- *  
- *  **/
+ * 購入確認画面 Controller 情報画面
+ */
 @Controller
 @RequiredArgsConstructor
-public class PurchaseDetailController extends CommonController {
+public class PurchaseConfirmationController extends CommonController {
 
 	/**	商品カテゴリー情報テーブルDAO */
 	private final ProductService productService;
 
-	/**
-	 * 購入品詳細画面
-	 * @param session セッション
-	 * @param model モデル
-	 * @param productId 商品
-	 * @return 購入品詳細画面表示
-	 */
-	@GetMapping("/purchaseDetail")
-	public String purchaseDetail(HttpSession session, Model model, Integer productId) {
-		addCommonAttributes(session, model, productService); // 共通の属性を追加
-		if (productId == null) {
-			Integer cartProductId = (Integer) session.getAttribute("productId");
-			model.addAttribute("product", cartProductId);
-			if (cartProductId != null) {
-				Product product = productService.getProductById(cartProductId);
-				model.addAttribute("product", product);
-			}
-		} else {
-			Product product = productService.getProductById(productId);
-			model.addAttribute("product", product);
-		}
-		return "purchase/purchaseDetail";
-	}
+	@Autowired
+	private OrderService orderService;
 
-	/**
-	 * 購入確認画面へ
-	 * @param form フォーム
+	/** カートサービス */
+	//	private final CartService cartService;
+
+	/** 購入確認画面 
 	 * @param session セッション
 	 * @param model モデル
 	 * @param productId 商品ID
 	 * @return 表示
-	 */
-	@PostMapping("/purchaseConfirmation")
-	public String purchaseDetailForm(@ModelAttribute PurchaseDetailForm form,
-			HttpSession session, Model model, Integer productId) {
+	 * **/
+	@GetMapping("/purchaseConfirmation")
+	public String purchaseConfirmation(HttpSession session, Model model, Integer productId) {
 		addCommonAttributes(session, model, productService);
-
-		if (productId == null) {
-			Integer cartProductId = (Integer) session.getAttribute("productId");
-			model.addAttribute("product", cartProductId);
-			if (cartProductId != null) {
-				Product product = productService.getProductById(cartProductId);
-				model.addAttribute("product", product);
-			}
-		} else {
-			Product product = productService.getProductById(productId);
-			model.addAttribute("product", product);
-		}
 
 		List<Cart> cartList = new ArrayList<>();
 		BigDecimal totalPriceIncludingTax = BigDecimal.ZERO;
@@ -91,6 +60,7 @@ public class PurchaseDetailController extends CommonController {
 
 			if (product == null) {
 				model.addAttribute("errorMessage", "商品が見つかりません");
+				return "error";
 			}
 
 			// 商品の数量を1に設定
@@ -156,30 +126,85 @@ public class PurchaseDetailController extends CommonController {
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		model.addAttribute("productName", productNames);
-		model.addAttribute("quantity", totalQuantity);
+		model.addAttribute("quantity", totalQuantity); // 数量を設定
 		model.addAttribute("productStock", productStocks);
 		model.addAttribute("totalAmount", totalAmount);
 
-		String selectedLocation = form.getSelectedLocation();
-		String selectedPayInformation = form.getSelectedPayInformation();
-
-		String userAddress = selectedLocation.equals("1") ? form.getUserAddress1() : form.getUserAddress2();
-		String apartment = selectedLocation.equals("1") ? form.getApartment1() : form.getApartment2();
-		String cardNumber = selectedPayInformation.equals("1") ? form.getCardNumber1() : form.getCardNumber2();
-		String expirationDate = selectedPayInformation.equals("1") ? form.getExpirationDate1()
-				: form.getExpirationDate2();
-		form.setSelectedUserAddress(userAddress);
-		form.setSelectedApartment(apartment);
-		form.setSelectedCardNumber(cardNumber);
-		form.setSelectedExpirationDate(expirationDate);
-
-		session.setAttribute("selectedUserAddress", userAddress);
-		session.setAttribute("selectedApartment", apartment);
-		session.setAttribute("selectedCardNumber", cardNumber);
-		session.setAttribute("selectedExpirationDate", expirationDate);
-		session.setAttribute("purchaseDetailForm", form);
-		model.addAttribute("purchaseDetailForm", form);
 		return "purchase/purchaseConfirmation";
 	}
 
+	/** 購入確認画面から完了画面へ 購入内容の詳細
+	 * @param session セッション
+	 * @param model モデル
+	 * @param productId 商品
+	 * @return 購入確認画面 表示
+	 *  **/
+	@PostMapping("/orderComplete")
+	public String orderComplete(
+			HttpSession session, Model model, Integer productId) {
+		addCommonAttributes(session, model, productService);
+		Object cartListObj = session.getAttribute("cartList"); // カートにある商品を表示
+		List<Cart> cartList;
+		if (cartListObj instanceof List<?>) {
+			cartList = ((List<?>) cartListObj).stream()
+					.filter(item -> item instanceof Cart)
+					.map(item -> (Cart) item)
+					.collect(Collectors.toList());
+		} else {
+			cartList = new ArrayList<>();
+		}
+
+		// カート内の各商品の商品名を取得してモデルに追加
+		List<String> productNames = cartList.stream()
+				.map(cartItem -> cartItem.getProduct().getProductName())
+				.collect(Collectors.toList());
+		List<Integer> quantities = cartList.stream()
+				.map(cartItem -> cartItem.getQuantity())
+				.collect(Collectors.toList());
+		BigDecimal totalAmount = cartList.stream()
+				.map(cartItem -> cartItem.getProduct().getTaxPrice()
+						.multiply(BigDecimal.valueOf(cartItem.getQuantity())))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		model.addAttribute("productName", productNames);
+		model.addAttribute("quantity", quantities);
+		model.addAttribute("totalAmount", totalAmount);
+
+		PurchaseDetailForm form = (PurchaseDetailForm) session.getAttribute("purchaseDetailForm");
+		if (form == null) {
+			model.addAttribute("errorMessage", "購入詳細フォームが見つかりませんでした。");
+			return "error";
+		}
+
+		Order order = new Order();
+		String userIdStr = (String) session.getAttribute("userId");
+		if (userIdStr != null) {
+			order.setUserId(Integer.parseInt(userIdStr));
+		}
+		order.setTotalAmount(totalAmount);
+		order.setStatus("Pending");
+		order = orderService.saveOrder(order);
+
+		final Order finalOrder = order; // Orderを最終的な変数に設定
+
+		// OrderItemsを作成して保存
+		List<OrderItem> orderItems = cartList.stream().map(cartItem -> {
+			OrderItem orderItem = new OrderItem();
+			orderItem.setOrder(finalOrder);
+			orderItem.setOrderId(finalOrder.getOrderId());
+			orderItem.setProduct(cartItem.getProduct());
+			orderItem.setProductId(cartItem.getProduct().getProductId());
+			orderItem.setQuantity(cartItem.getQuantity());
+			orderItem.setPrice(cartItem.getProduct().getTaxPrice());
+			return orderItem;
+		}).collect(Collectors.toList());
+		orderService.saveOrderItems(orderItems);
+
+		// 注文完了後にカートをクリア
+		session.removeAttribute("cartList");
+
+		// 注文完了画面に購入情報を渡す
+		model.addAttribute("purchaseDetailForm", form);
+		return "cart/order_complete";
+	}
 }
