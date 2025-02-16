@@ -208,50 +208,6 @@ public class CartListController extends CommonController {
 	public String cartPurchaseDetail(HttpSession session, Model model,Integer productId,
 			Integer hiddenQuantity) {
 		addCommonAttributes(session, model, productService); // 共通の属性を追加
-//
-//		Integer productId1 = (Integer) session.getAttribute("productId");
-//	    if (productId1 == null) {
-//	        model.addAttribute("errorMessage", "商品IDが見つかりませんでした。");
-//	    }
-//	    model.addAttribute("productId", productId1);
-//		// 商品IDから商品情報を取得
-////		Product product = productService.getProductById(productId1);
-////		if (product == null) {
-////			model.addAttribute("errorMessage", "商品情報が見つかりませんでした。");
-////		}
-////		BigDecimal totalPriceIncludingTax = product.getTaxPrice().multiply(BigDecimal.valueOf(hiddenQuantity));
-//		
-//		// カートリストをセッションから取得
-//	    Object cartListObj = session.getAttribute("cartList");
-//	    List<Cart> cartList;
-//	    if (cartListObj instanceof List<?>) {
-//	        cartList = ((List<?>) cartListObj).stream()
-//	                .filter(item -> item instanceof Cart)
-//	                .map(item -> (Cart) item)
-//	                .collect(Collectors.toList());
-//	    } else {
-//	        cartList = new ArrayList<>();
-//	    }
-//	    model.addAttribute("cartList", cartList);
-//	    
-//		// 新しいカートアイテムを作成して追加
-//		Cart newCartItem = new Cart();
-//		newCartItem.setProductId(productId);
-////		newCartItem.setProduct(product);// Productオブジェクトを設定
-//		newCartItem.setQuantity(hiddenQuantity);
-////		newCartItem.setTotalAmount(totalPriceIncludingTax);
-//
-//		String userIdStr = (String) session.getAttribute("userId");
-//		if (userIdStr == null) {
-//			model.addAttribute("errorMessage", "ユーザーIDが見つかりませんでした。");
-//		}
-//		newCartItem.setUserId(Integer.parseInt(userIdStr)); // String型をInteger型に変換
-//
-//		cartList.add(newCartItem);
-//		session.setAttribute("cartList", cartList);
-//
-//		// カートアイテムをデータベースに保存
-//		cartService.saveCartItem(newCartItem);
 		return "purchase/purchaseDetail";
 	}
 

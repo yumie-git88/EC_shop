@@ -104,7 +104,6 @@
 						<p th:text="'¥' + ${totalPriceIncludingTax}" class="ml-2 mb-0"></p>
 					</div>
 					<form th:action="@{/cartPurchaseDetail}" method="post" id="cartPurchaseForm">
-						<!--<input type="hidden" name="productId" th:value="${product?.productId}">-->
 						<button type="button" class="btn btn-primary" onclick="submitCartPurchaseForm()">レジに進む</button>
 					</form>
 				</div>
